@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
-#include <../../Libraries/LibWeb/CSS/StyleValues/StyleValue.h>
+#include <LibWeb/CSS/StyleValues/StyleValue.h>
 #include <AK/JsonObject.h>
 #include <AK/JsonValue.h>
 #include <AK/LexicalPath.h>

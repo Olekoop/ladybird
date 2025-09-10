@@ -8,7 +8,7 @@
   ],
   "homepage": "https://github.com/google/dawn",
   "license": "BSD-3-Clause",
-  "supports": "windows | linux | osx",
+  "supports": "windows | linux | osx | android",
   "dependencies": [
     {
       "name": "vcpkg-gn",
@@ -26,7 +26,7 @@
     },
     {
       "name": "vulkan",
-      "platform": "windows | linux"
+      "platform": "windows | linux | android"
     },
     {
       "name": "metal",
@@ -44,7 +44,7 @@
     },
     "vulkan": {
       "description": "Vulkan backend support",
-      "supports": "windows | linux"
+      "supports": "windows | linux | android"
     },
     "metal": {
       "description": "Metal backend support",

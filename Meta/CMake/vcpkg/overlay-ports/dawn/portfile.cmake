@@ -94,6 +94,7 @@ dawn_fetch(
     REF db0d31d702840881c049c523a2226e8e391929bf
     SOURCE ${SOURCE_PATH}
     PATCHES "${CMAKE_CURRENT_LIST_DIR}/macos_build_find_sdk.patch" # Extracted ports of https://github.com/microsoft/vcpkg/blame/master/ports/chromium-base/res/0002-build.patch to resolve the configure error "xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance" that occurs in Github Actions CI
+            "${CMAKE_CURRENT_LIST_DIR}/patch_android_build.patch"
 )
 # https://dawn.googlesource.com/dawn/+/refs/heads/chromium/7258/buildtools
 dawn_fetch(
@@ -109,6 +110,7 @@ dawn_fetch(
     REF ae9705179f821d1dbd2b0a2ba7a6582faac7f86b
     SOURCE ${SOURCE_PATH}
     PATCHES "${CMAKE_CURRENT_LIST_DIR}/testing_remove_catapult_deps.patch" # Prevents us from having to clone the large catapult repository as we don't use it and it also causes issues on Windows during git fetch due to long paths
+            "${CMAKE_CURRENT_LIST_DIR}/patch_android_testing.patch"
 )
 # https://dawn.googlesource.com/dawn/+/refs/heads/chromium/7258/third_party/abseil-cpp
 dawn_fetch(
@@ -239,11 +241,17 @@ vcpkg_execute_required_process(
     LOGNAME build-${TARGET_TRIPLET}
 )
 
+vcpkg_execute_required_process(
+        COMMAND "sh" "-c" [=[echo enable_java_templates = false >> build_overrides/build.gni]=]
+        WORKING_DIRECTORY ${SOURCE_PATH}
+        LOGNAME build-${TARGET_TRIPLET}
+)
+
 if("x11" IN_LIST FEATURES)
     set(DAWN_USE_WAYLAND "dawn_use_wayland=false")
     set(DAWN_USE_X11 "dawn_use_x11=true")
 else()
-    set(DAWN_USE_WAYLAND "dawn_use_wayland=true")
+    set(DAWN_USE_WAYLAND "dawn_use_wayland=false")
     set(DAWN_USE_X11 "dawn_use_x11=false")
 endif()
 
@@ -255,12 +263,21 @@ elseif("metal" IN_LIST FEATURES)
     set(DAWN_ENABLE_METAL "dawn_enable_metal=true")
 endif()
 
+if (NOT VCPKG_TARGET_IS_ANDROID)
 vcpkg_gn_configure(
     SOURCE_PATH "${SOURCE_PATH}"
     OPTIONS "target_cpu=\"${VCPKG_TARGET_ARCHITECTURE}\" use_sysroot=false tint_build_hlsl_writer=false tint_has_fuzzers=false tint_build_unittests=false tint_build_benchmarks=false is_clang=true use_custom_libcxx=false dawn_standalone=true ${DAWN_USE_X11} ${DAWN_USE_WAYLAND} dawn_use_swiftshader=false dawn_tests_use_angle=false ${DAWN_ENABLE_VULKAN} ${DAWN_ENABLE_METAL} dawn_enable_d3d12=false"
     OPTIONS_DEBUG "is_debug=true"
     OPTIONS_RELEASE "is_debug=false"
 )
+else()
+    vcpkg_gn_configure(
+            SOURCE_PATH "${SOURCE_PATH}"
+            OPTIONS "target_cpu=\"${VCPKG_TARGET_ARCHITECTURE}\" use_sysroot=false target_os=\"android\" treat_warnings_as_errors=false android_static_analysis=\"off\" tint_build_hlsl_writer=false tint_has_fuzzers=false tint_build_unittests=false tint_build_benchmarks=false is_clang=true sysroot=\"/home/olek/Android/Sdk/ndk/29.0.13599879/toolchains/llvm/prebuilt/linux-x86_64/sysroot\" use_custom_libcxx=false dawn_standalone=true ${DAWN_USE_X11} ${DAWN_USE_WAYLAND} dawn_use_swiftshader=false dawn_tests_use_angle=false ${DAWN_ENABLE_VULKAN} ${DAWN_ENABLE_METAL} dawn_enable_d3d12=false"
+            OPTIONS_DEBUG "is_debug=true"
+            OPTIONS_RELEASE "is_debug=false"
+    )
+endif ()
 
 vcpkg_gn_install(
     SOURCE_PATH "${SOURCE_PATH}"

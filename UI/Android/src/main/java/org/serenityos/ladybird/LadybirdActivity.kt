@@ -88,7 +88,7 @@ class LadybirdActivity : AppCompatActivity() {
             false
         }
         view.initialize(resourceDir)
-        view.loadURL(intent.dataString ?: "https://ladybird.dev")
+        view.loadURL(intent.dataString ?: "https://webglreport.com/")
     }
 
     override fun onStart() {

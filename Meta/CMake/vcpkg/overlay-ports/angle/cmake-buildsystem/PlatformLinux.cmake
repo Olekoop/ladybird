@@ -1,4 +1,8 @@
+if (is_android)
+    list(APPEND ANGLE_DEFINITIONS ANGLE_PLATFORM_ANDROID)
+endif ()
 list(APPEND ANGLE_DEFINITIONS USE_SYSTEM_EGL)
+
 include(linux.cmake)
 
 if (USE_OPENGL)
