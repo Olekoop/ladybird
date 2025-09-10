@@ -1,0 +1,24 @@
+--- a/test.gni	2025-08-14 10:53:05.199816841 +0200
++++ b/test.gni	2025-08-14 10:53:33.560914314 +0200
+@@ -39,6 +39,7 @@
+   import("//build/config/android/create_unwind_table.gni")
+   import("//build/config/android/extract_unwind_tables.gni")
+   import("//build/config/android/rules.gni")
++  import("//build/config/android/internal_rules.gni")
+   import("//build/config/sanitizers/sanitizers.gni")
+ } else if (is_fuchsia) {
+   import("//build/config/fuchsia/generate_runner_scripts.gni")
+--- a/BUILD.gn	2025-08-14 11:08:36.767676645 +0200
++++ b/BUILD.gn	2025-08-14 11:25:28.782224547 +0200
+@@ -79,11 +79,6 @@
+   data_deps = [
+     ":test_scripts_shared",
+   ]
+-
+-  if (is_android) {
+-    # Required when running with bundles (to run "bundletool").
+-    data_deps += [ "//third_party/jdk:java_data" ]
+-  }
+ }
+ 
+ group("pytype_dependencies") {

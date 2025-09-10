@@ -1,0 +1,47 @@
+--- a/android/BUILD.gn	2025-08-14 12:07:56.563877620 +0200
++++ b/android/BUILD.gn	2025-08-14 12:10:42.011166572 +0200
+@@ -131,7 +131,6 @@
+   data = [
+     "//build/android/pylib/results/presentation/template",
+     "//build/android/pylib/results/presentation/javascript/main_html.js",
+-    "//third_party/catapult/third_party/gsutil/",
+     "//third_party/jinja2/debug.py",
+     "//third_party/six",
+   ]
+@@ -142,8 +141,6 @@
+   data = [
+     "devil_chromium.py",
+     "devil_chromium.json",
+-    "//third_party/catapult/third_party/gsutil/",
+-    "//third_party/catapult/devil/devil/devil_dependencies.json",
+ 
+     # Read by gn_helpers.BuildWithChromium()
+     "//build/config/gclient_args.gni",
+@@ -246,7 +243,6 @@
+   pydeps_file = "resource_sizes.pydeps"
+   data_deps = [
+     ":devil_chromium_py",
+-    "//third_party/catapult/tracing:convert_chart_json",
+   ]
+ 
+   data = [
+--- a/config/android/BUILD.gn	2025-08-15 12:47:15.469633944 +0200
++++ b/config/android/BUILD.gn	2025-08-15 12:47:01.387609241 +0200
+@@ -92,17 +92,9 @@
+ }
+ 
+ config("hide_all_but_jni_onload") {
+-  _version_script = "//build/android/android_only_explicit_jni_exports.lst"
+-  inputs = [ _version_script ]
+-  ldflags =
+-      [ "-Wl,--version-script=" + rebase_path(_version_script, root_build_dir) ]
+ }
+ 
+ config("hide_all_but_jni") {
+-  _version_script = "//build/android/android_only_jni_exports.lst"
+-  inputs = [ _version_script ]
+-  ldflags =
+-      [ "-Wl,--version-script=" + rebase_path(_version_script, root_build_dir) ]
+ }
+ 
+ config("lld_pack_relocations") {
